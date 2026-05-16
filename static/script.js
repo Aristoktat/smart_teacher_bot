@@ -36,9 +36,9 @@ async function callGemini(promptText, isJson = false) {
             console.error("Gemini API Error:", errorData);
             if (res.status === 400 || res.status === 403 || res.status === 401) {
                 localStorage.removeItem('gemini_api_key');
-                return "API kaliti xato yoki yaroqsiz! Sahifani yangilab qaytadan to'g'ri kalitni kiriting.";
+                return `API kaliti xato yoki yaroqsiz! (Status: ${res.status}). Sahifani yangilab qaytadan to'g'ri kalitni kiriting.`;
             }
-            return "API xatosi yuz berdi. Iltimos, birozdan so'ng qayta urining.";
+            return `API xatosi yuz berdi (Status: ${res.status}). Iltimos, birozdan so'ng qayta urining.`;
         }
 
         const data = await res.json();
