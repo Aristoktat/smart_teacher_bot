@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart-Teacher | Multi-Game Platform</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><span>🎓</span><h1>Smart-Teacher</h1></div>
+            <div id="user-display" class="user-info">Yuklanmoqda...</div>
+        </header>
+
+        <main>
+            <div class="prompt-grid">
+                <div class="prompt-card" onclick="sendPrompt('vocabulary')">📚 Yangi so'zlar</div>
+                <div class="prompt-card" onclick="sendPrompt('grammar')">📝 Grammatika</div>
+                <div class="prompt-card game" onclick="sendPrompt('game')">🎮 Scramble</div>
+                <div class="prompt-card quiz" onclick="sendPrompt('quiz')">⚡ True/False</div>
+                <div class="prompt-card translate" onclick="sendPrompt('translate')">🌍 Translate</div>
+                <div class="prompt-card hangman" onclick="sendPrompt('hangman')" style="background:#f43f5e;color:#fff;">🪓 Hangman</div>
+                <div class="prompt-card odd" onclick="sendPrompt('odd')" style="background:#10b981;color:#fff;">🧐 Odd One</div>
+                <div class="prompt-card emoji" onclick="sendPrompt('emoji')" style="background:#f59e0b;color:#fff;">🎭 Emoji</div>
+                <div class="prompt-card builder" onclick="sendPrompt('builder')" style="background:#6366f1;color:#fff;">🏗 Builder</div>
+                <div class="prompt-card minecraft" onclick="sendPrompt('minecraft')" style="background:#2e7d32;color:#fff;">⛏️ Minecraft</div>
+                <div class="prompt-card mario" onclick="sendPrompt('mario')" style="background:#e74c3c;color:#fff;">🍄 Mario Learning</div>
+                <div class="prompt-card shooter" onclick="sendPrompt('shooter')" style="background:#1e3799;color:#fff;">🚀 Space Shooter</div>
+                <div class="prompt-card battle" onclick="sendPrompt('battle')" style="background:#c0392b;color:#fff;">🥊 Word Battle</div>
+            </div>
+
+            <!-- Word Battle Area -->
+            <div id="battle-area" class="game-area" style="display: none; background: linear-gradient(to bottom, #2c3e50, #000); overflow: hidden; position: relative;">
+                <div class="game-header">
+                    <button onclick="showMain()" style="color:white;">← Orqaga</button>
+                    <div class="score">G'alabalar: <span id="battle-wins">0</span></div>
+                </div>
+                
+                <div class="battle-ui" style="display:flex; justify-content:space-between; padding: 20px;">
+                    <div class="hp-container">
+                        <div style="color:white; font-weight:bold;">Siz (Player)</div>
+                        <div style="width:200px; height:20px; background:#eee; border-radius:10px;">
+                            <div id="player-hp" style="width:100%; height:100%; background:#2ecc71; border-radius:10px; transition: 0.3s;"></div>
+                        </div>
+                    </div>
+                    <div class="hp-container" style="text-align:right;">
+                        <div style="color:white; font-weight:bold;">Dushman (Enemy)</div>
+                        <div style="width:200px; height:20px; background:#eee; border-radius:10px;">
+                            <div id="enemy-hp" style="width:100%; height:100%; background:#e74c3c; border-radius:10px; transition: 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="battle-question-box" style="text-align:center; margin-top:20px;">
+                    <h3 id="battle-q" style="color:#feca57; font-size: 1.8rem;">Tayyorlaning!</h3>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+                        <input type="text" id="battle-input" style="padding:10px; border-radius:5px; border:none; width:200px;" placeholder="Javobni yozing...">
+                        <button onclick="checkBattleAnswer()" style="padding:10px 20px; background:#feca57; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">UR! (Attack)</button>
+                    </div>
+                </div>
+
+                <canvas id="battleCanvas" style="display:block; margin: 0 auto;"></canvas>
+            </div>
+
+            <!-- Space Shooter Area -->
+            <div id="shooter-area" class="game-area" style="display: none; background: #0c2461; overflow: hidden; position: relative;">
+                <div class="game-header">
+                    <button onclick="showMain()" style="color:white;">← Orqaga</button>
+                    <div class="score">Ball: <span id="shooter-score">0</span></div>
+                </div>
+                <div id="shooter-question" style="text-align:center; color:#feca57; font-size: 1.5rem; margin-bottom: 10px; font-weight: bold;"></div>
+                <canvas id="shooterCanvas"></canvas>
+            </div>
+
+            <!-- Mario Area -->
+            <div id="mario-area" class="game-area" style="display: none; background: #5c94fc; overflow: hidden; position: relative;">
+                <div class="game-header">
+                    <button onclick="showMain()" style="color:white;">← Orqaga</button>
+                    <div class="mario-stats">
+                        <div class="lives">Jonlar: <span id="mario-lives">❤️❤️❤️</span></div>
+                        <div class="score">Ball: <span id="mario-score">0</span></div>
+                    </div>
+                </div>
+                <canvas id="marioCanvas"></canvas>
+                <div id="mario-question-popup" class="mine-question" style="display:none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; background: rgba(0,0,0,0.8); border: 4px solid #fff;">
+                    <p id="mario-word" style="color:white; font-size: 1.5rem;"></p>
+                    <input type="text" id="mario-input" onkeypress="handleKeyPress(event)" style="width: 200px;">
+                    <button onclick="checkMarioAnswer()" style="padding: 10px; background: #e74c3c; color: white; border: none; font-weight: bold;">Javob!</button>
+                </div>
+            </div>
+
+            <!-- Game Areas -->
+            <div id="game-container" class="game-area" style="display: none;">
+                <div class="game-header">
+                    <button onclick="showMain()">← Chiqish</button>
+                    <div class="score">Ball: <span id="main-score">0</span></div>
+                </div>
+                <div id="game-content" class="game-content">
+                    <h2 id="game-title">O'yin</h2>
+                    <div id="display-area" class="scrambled-word"></div>
+                    <p id="hint-area"></p>
+                    <div id="options-area" class="quiz-options"></div>
+                    <input type="text" id="main-input" placeholder="Javob..." autocomplete="off">
+                    <div class="game-actions">
+                        <button onclick="checkAnswer()" class="check-btn">Check</button>
+                        <button onclick="nextRound()" class="skip-btn">Skip</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minecraft (Special Area) -->
+            <div id="minecraft-area" class="game-area" style="display: none; background: #5c4033; color: #fff;">
+                <button onclick="showMain()">← Orqaga</button>
+                <div id="mine-grid" class="mine-grid"></div>
+                <div id="mine-question" class="mine-question" style="display:none;">
+                    <p id="mine-word"></p>
+                    <input type="text" id="mine-input" onkeypress="handleKeyPress(event)"><button onclick="checkMine()">Mine!</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div id="chat-box" class="chat-box"><div class="message ai">Qanday yordam bera olaman? 😊</div></div>
+                <div class="input-area">
+                    <input type="text" id="user-input" onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">🚀</button>
+                </div>
+            </div>
+            <!-- Mobile Controls -->
+            <div id="mobile-controls" style="display: none; position: fixed; bottom: 20px; left: 0; width: 100%; justify-content: space-between; padding: 0 20px; z-index: 1000; pointer-events: none; box-sizing: border-box;">
+                <div style="pointer-events: auto; display: flex; gap: 15px;">
+                    <button id="btn-left" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.3); border: 2px solid white; color: white; font-size: 24px; user-select: none; -webkit-tap-highlight-color: transparent;">◀</button>
+                    <button id="btn-right" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.3); border: 2px solid white; color: white; font-size: 24px; user-select: none; -webkit-tap-highlight-color: transparent;">▶</button>
+                </div>
+                <div style="pointer-events: auto; display: flex; gap: 15px;">
+                    <button id="btn-action" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(231,76,60,0.5); border: 2px solid white; color: white; font-size: 24px; user-select: none; -webkit-tap-highlight-color: transparent;">💥</button>
+                    <button id="btn-jump" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(52,152,219,0.5); border: 2px solid white; color: white; font-size: 24px; user-select: none; -webkit-tap-highlight-color: transparent;">▲</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="static/script.js"></script>
+    <script src="static/mario.js"></script>
+    <script src="static/shooter.js"></script>
+    <script src="static/battle.js"></script>
+
+</body>
+</html>
