@@ -9,7 +9,9 @@ const battleKeys = {};
 const SYSTEM_PROMPT = "Rol: Sen maktab o'quvchilari uchun ingliz tilini oson va qiziqarli o'rgatuvchi yordamchisan. Javoblaring qisqa, sodda bo'lsin.";
 
 async function callGemini(promptText, isJson = false) {
-    let apiKey = localStorage.getItem('gemini_api_key');
+    // Kalitni osonlik uchun kod ichiga yozib qo'ydim
+    let apiKey = localStorage.getItem('gemini_api_key') || "AIzaSyCAUfDbsoQUZ8N_Cu5-kGou-hQhVWhIsfs";
+    
     if (!apiKey) {
         apiKey = prompt("Google Gemini API kalitingizni kiriting:\n(Kalitni aistudio.google.com saytidan olishingiz mumkin)");
         if (apiKey) {
