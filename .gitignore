@@ -1,5 +1,7 @@
-__pycache__/
 .env
-users.db
+node_modules/
+.DS_Store
+__pycache__/
 *.pyc
-*.db
+.idea/
+.vscode/

@@ -266,6 +266,8 @@ function initApp() {
     }
     document.getElementById('user-display').innerHTML = `Salom, <strong>${userName}</strong>! | <a href="#" onclick="resetUser()">Chiqish</a>`;
     
+    document.getElementById('github-upload-btn').onclick = openModal;
+
     window.addEventListener('keydown', (e) => { 
         keys[e.code] = true; 
         battleKeys[e.code] = true;
@@ -282,6 +284,14 @@ function resetUser() {
     localStorage.removeItem('user_name');
     localStorage.removeItem('gemini_api_key');
     location.reload();
+}
+
+function openModal() {
+    document.getElementById('upload-modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('upload-modal').style.display = 'none';
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
