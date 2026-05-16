@@ -21,7 +21,7 @@ async function callGemini(promptText, isJson = false) {
         }
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const body = { contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + promptText }] }] };
 
     try {
