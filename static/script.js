@@ -11,32 +11,56 @@ const SYSTEM_PROMPT = "Rol: Sen maktab o'quvchilari uchun ingliz tilini oson va 
 async function callGemini(promptText, isJson = false) {
     let apiKey = localStorage.getItem('gemini_api_key');
     if (!apiKey) {
-        apiKey = prompt("Google Gemini API kalitingizni kiriting:");
-        if (apiKey) localStorage.setItem('gemini_api_key', apiKey);
-        else return; 
+        apiKey = prompt("Google Gemini API kalitingizni kiriting:\n(Kalitni aistudio.google.com saytidan olishingiz mumkin)");
+        if (apiKey) {
+            localStorage.setItem('gemini_api_key', apiKey);
+        } else {
+            return "API kaliti kiritilmadi. Iltimos, sahifani yangilab kalitni kiriting.";
+        }
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const body = { contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + promptText }] }] };
 
-    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    try {
+        const res = await fetch(url, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" }, 
+            body: JSON.stringify(body) 
+        });
 
-    if (!res.ok) {
-        if(res.status === 400 || res.status === 403) {
-            localStorage.removeItem('gemini_api_key');
-            alert("API kaliti xato yoki yaroqsiz! Sahifani yangilab qaytadan kiriting.");
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error("Gemini API Error:", errorData);
+            if (res.status === 400 || res.status === 403 || res.status === 401) {
+                localStorage.removeItem('gemini_api_key');
+                return "API kaliti xato yoki yaroqsiz! Sahifani yangilab qaytadan to'g'ri kalitni kiriting.";
+            }
+            return "API xatosi yuz berdi. Iltimos, birozdan so'ng qayta urining.";
         }
-        throw new Error("API Error");
-    }
 
-    const data = await res.json();
-    let text = data.candidates[0].content.parts[0].text;
-    
-    if (isJson) {
-        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-        return JSON.parse(text);
+        const data = await res.json();
+        if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
+            console.error("Unexpected API response:", data);
+            return "AI javob qaytara olmadi. Iltimos, savolni boshqacharoq bering.";
+        }
+
+        let text = data.candidates[0].content.parts[0].text;
+        
+        if (isJson) {
+            text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error("JSON Parse Error:", text);
+                throw new Error("JSON Parse Error");
+            }
+        }
+        return text;
+    } catch (e) {
+        console.error("Fetch Error:", e);
+        return "Tarmoqda xatolik yuz berdi. Internetingizni tekshiring.";
     }
-    return text;
 }
 
 const aiPrompts = {
